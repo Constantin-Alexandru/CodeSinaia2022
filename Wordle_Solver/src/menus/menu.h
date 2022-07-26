@@ -24,9 +24,9 @@ private:
   Config config;
 
   std::vector<std::vector<std::string>> menus = {
-      {"", "Start Game", "Configure", "Statistics", "About", "Credits", "Exit"},
+      {"Start Game", "Configure", "Statistics", "About", "Credits", "Exit"},
       {"Add Word", "Remove Word", "Back"},
-      { "Back"},
+      {"Back"},
       {"Back"},
       {"Back"}};
 };

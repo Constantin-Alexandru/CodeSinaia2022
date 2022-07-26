@@ -1,1 +1,1 @@
-g++ -o ./bin/wordle_solver.exe ./ANSI-Library/ansi_lib.h ./src/config.h ./src/config.cpp ./src/menu.h ./src/menu.cpp ./src/main.cpp
+g++ -o ./bin/wordle_solver.exe ./ANSI-Library/ansi_lib.h ./src/config.h ./src/config.cpp ./src/menu.h ./src/menu.cpp ./src/main.cpp ./src/utils.h ./src/utils.cpp ./src/typedefs.h

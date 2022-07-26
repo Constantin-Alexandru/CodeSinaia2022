@@ -3,6 +3,7 @@
 #include "utils.h"
 #include <conio.h>
 
+#define KEY_ENTER 13
 #define KEY_ARR -32
 #define KEY_UP 72
 #define KEY_DOWN 80
@@ -15,27 +16,21 @@
 
 void Menu::show(Position position)
 {
-  v2 pos = v2();
-
-  switch (current_menu)
-  {
-  case 0:
-    pos = config.calculate_position(Position::CENTER, -3, -3);
-    break;
-  case 1:
-    pos = config.calculate_position(Position::CENTER, -4, -1);
-    break;
-  case 2:
-  case 3:
-  case 4:
-    pos = config.calculate_position(Position::BOTTOM_CENTER, -2);
-    break;
-  }
+  v2 pos = config.calculate_position(position);
 
   for (int i = 0; i < menus[current_menu].size(); i++)
   {
     MOVE_CURSOR_TO_POS(pos.height + i, pos.width);
+    if (i == this->current_option)
+    {
+      SET_8_VALUE_COLOUR(TXT_MAGENTA);
+      std::cout << "> ";
+    }
     std::cout << menus[current_menu][i] << '\n';
+    if (i == this->current_option)
+    {
+      SET_8_VALUE_COLOUR(TXT_WHITE);
+    }
   }
 }
 
@@ -52,7 +47,7 @@ void Menu::process_input(char key)
   case KEY_UP:
     this->current_option = wrap<int>(this->current_option - 1, 0, menus[current_menu].size());
     break;
-  case KEY_D:
+  case KEY_S:
   case KEY_DOWN:
     this->current_option = wrap<int>(this->current_option + 1, 0, menus[current_menu].size());
     break;

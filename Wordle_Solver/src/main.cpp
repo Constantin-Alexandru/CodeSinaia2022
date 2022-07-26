@@ -3,6 +3,7 @@
 #include "../ANSI-Library/ansi_lib.h"
 #include "menu.h"
 #include <Windows.h>
+#include <conio.h>
 
 int main(int argc, char *argv[])
 {
@@ -10,13 +11,18 @@ int main(int argc, char *argv[])
 
   Menu menu = Menu(v2(50, 50));
 
-  ERASE_SCREEN;
-  menu.show(Position::CENTER);
+  char c;
 
-  Sleep(5000);
-  Sleep(5000);
-  Sleep(5000);
-  Sleep(5000);
+  while (true)
+  {
+    ERASE_SCREEN;
+    menu.show(Position::CENTER);
+    c = getch();
+    menu.process_input(c);
+
+    if (c == 27)
+      exit(0);
+  }
 
   resetConsole();
 }
