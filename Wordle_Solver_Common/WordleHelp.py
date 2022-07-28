@@ -4,33 +4,24 @@
 # object to process each of the supported commands
 import CmdProcessor as cp
 
-wordsDic = {}
+wordsDict = {}
 
 if __name__ == "__main__":
 
-    reader = open("words.txt", 'r')
+    cmdProcessor = cp.CmdProcessor()
 
-    lines = reader.readlines()
-
-    for line in lines:
-        pair = line.split()
-        wordsDic[pair[0]] = int(pair[1])
-    print("\x1b[33m[INFO] ", end="")
-    print("\x1b[32mSuccessfully loaded {count} words".format(
-        count=len(wordsDic)))
-    print("\x1b[0m", end="")
-
-    print("This is Wordle helper!")
-    #cmdProcessor = cp.CmdProcessor()
-    cmdProcessor = None
     line = input("Command?> ").lower()
     while(line != "quit" and line != "exit"):
         if line == "?" or line == "help":
             cmdProcessor.processHelp()
         elif line.startswith("add"):
-            cmdProcessor.processAdd(line)
+            wordsDict = cmdProcessor.processAdd(line[4:])
+            print("\x1b[33m[INFO] ", end="")
+            print("\x1b[32mSuccessfully loaded {count} words".format(
+                count=len(wordsDict)))
+            print("\x1b[0m")
         elif line.startswith("match"):
-            cmdProcessor.processMatch(line)
+            cmdProcessor.processMatch(line[6:])
         elif line.startswith("reset"):
             cmdProcessor.processReset(line)
         elif line.startswith("stats"):
