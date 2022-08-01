@@ -14,44 +14,46 @@ class WordChecker:
         self.must_pos = [[0 for _ in range(5)] for _ in range(26)]
         self.possible_pos = [[1 for _ in range(5)] for _ in range(26)]
         self.hints = []
+        self.found = ['_', '_', '_', '_', '_']
 
     def let_ord(self, ch) -> int:
         return ord(ch) - ord('a')
 
-    def order_list(self):
+    def order_list(self, empty=False):
 
-        dict_letters = dict()
+        if not empty:
+            dict_letters = dict()
 
-        for ch in self.must_letters:
-            if ch not in dict_letters:
-                dict_letters[ch] = 1
-            else:
-                dict_letters[ch] += 1
-
-        for i in range(5):
-            self.valid_words = [x for x in self.valid_words if
-                                self.must_pos[self.let_ord(x[i])][i] == 1 or self.possible_pos[self.let_ord(x[i])][i]]
-            self.valid_words = [x for x in self.valid_words if all(
-                [ch in x for ch in self.must_letters])]
-
-        toRemove = []
-
-        for word in self.valid_words:
-            letter_count = dict()
-            for i in range(5):
-                if word[i] not in letter_count:
-                    letter_count[word[i]] = 1
+            for ch in self.must_letters:
+                if ch not in dict_letters:
+                    dict_letters[ch] = 1
                 else:
-                    letter_count[word[i]] += 1
+                    dict_letters[ch] += 1
 
-            for ch in word:
-                if ch in dict_letters:
-                    if dict_letters[ch] > letter_count[ch]:
-                        toRemove.append(word)
+            for i in range(5):
+                self.valid_words = [x for x in self.valid_words if
+                                    self.must_pos[self.let_ord(x[i])][i] == 1 or self.possible_pos[self.let_ord(x[i])][i]]
+                self.valid_words = [x for x in self.valid_words if all(
+                    [ch in x for ch in self.must_letters])]
 
-        for word in toRemove:
-            if word in self.valid_words:
-                self.valid_words.remove(word)
+            toRemove = []
+
+            for word in self.valid_words:
+                letter_count = dict()
+                for i in range(5):
+                    if word[i] not in letter_count:
+                        letter_count[word[i]] = 1
+                    else:
+                        letter_count[word[i]] += 1
+
+                for ch in word:
+                    if ch in dict_letters:
+                        if dict_letters[ch] > letter_count[ch]:
+                            toRemove.append(word)
+
+            for word in toRemove:
+                if word in self.valid_words:
+                    self.valid_words.remove(word)
 
         letter_count = []
 
@@ -85,53 +87,60 @@ class WordChecker:
                     scores[i], scores[j] = scores[j], scores[i]
 
     def check(self, word):
-        green = False
-        yellow = False
-        matches_found = 0
-        self.hints = []
-        for i in range(len(word)):
-            ch = word[i]
+        empty = True
+        if word:
+            empty = False
+            green = False
+            yellow = False
+            matches_found = 0
+            self.hints = []
+            for i in range(len(word)):
+                ch = word[i]
 
-            if green:
-                green = False
-                self.must_pos[self.let_ord(ch)][i - matches_found] = 1
-                if ch not in self.must_letters:
-                    self.must_letters.append(ch)
-                for j in range(26):
-                    if j != self.let_ord(ch):
-                        self.possible_pos[j][i - matches_found] = 0
-                self.hints.append(ch)
-            elif yellow:
-                self.possible_pos[self.let_ord(ch)][i - matches_found] = 0
-                if ch not in self.must_letters:
-                    self.must_letters.append(ch)
-                self.hints.append(ch)
-                yellow = False
-            elif ch == "+":
-                green = True
-                matches_found += 1
-            elif ch == "~":
-                yellow = True
-                matches_found += 1
-            else:
-                if ch not in self.must_letters:
-                    for j in range(5):
-                        self.possible_pos[self.let_ord(ch)][j] = 0
-                else:
+                if green:
+                    green = False
+                    self.must_pos[self.let_ord(ch)][i - matches_found] = 1
+                    if ch not in self.must_letters:
+                        self.must_letters.append(ch)
+                    for j in range(26):
+                        if j != self.let_ord(ch):
+                            self.possible_pos[j][i - matches_found] = 0
+                    self.hints.append(ch)
+                    self.found[i - matches_found] = ch
+                elif yellow:
                     self.possible_pos[self.let_ord(ch)][i - matches_found] = 0
+                    if ch not in self.must_letters:
+                        self.must_letters.append(ch)
+                    self.hints.append(ch)
+                    yellow = False
+                elif ch == "+":
+                    green = True
+                    matches_found += 1
+                elif ch == "~":
+                    yellow = True
+                    matches_found += 1
+                else:
+                    if ch not in self.must_letters:
+                        for j in range(5):
+                            self.possible_pos[self.let_ord(ch)][j] = 0
+                    else:
+                        self.possible_pos[self.let_ord(
+                            ch)][i - matches_found] = 0
+                        if self.found[i - matches_found] == ch:
+                            self.hints.append(ch)
 
-        unique = []
+            unique = []
 
-        for ch in self.hints:
-            if ch not in unique:
-                unique.append(ch)
+            for ch in self.hints:
+                if ch not in unique:
+                    unique.append(ch)
 
-        for ch in unique:
-            if self.hints.count(ch) > 1:
-                while self.must_letters.count(ch) < self.hints.count(ch):
-                    self.must_letters.append(ch)
+            for ch in unique:
+                if self.hints.count(ch) > 1:
+                    while self.must_letters.count(ch) < self.hints.count(ch):
+                        self.must_letters.append(ch)
 
-        self.order_list()
+        self.order_list(empty=empty)
         return self.valid_words
 
     ###

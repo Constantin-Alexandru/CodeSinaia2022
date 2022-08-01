@@ -42,8 +42,15 @@ class CmdProcessor:
     def processMatch(self, args=None):
         words = self.checker.check(args)
 
-        for i in range(min(20, len(words))):
+        print("\x1b[33m[INFO] ", end="")
+        print("\x1b[32m{words} words remaining".format(words=len(words)))
+        print("\x1b[0m", end="")
+
+        for i in range(min(5, len(words))):
             print(words[i])
 
     def processReset(self, args=None):
         self.checker = WordChecker(self.words)
+        print("\x1b[33m[INFO] ", end="")
+        print("\x1b[32mSuccessfully reset hints")
+        print("\x1b[0m")
