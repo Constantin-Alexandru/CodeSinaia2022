@@ -1,6 +1,5 @@
 from errno import WSAECONNABORTED
 
-from pyparsing import Word
 from Scraper import Scraper
 from WordChecker import WordChecker
 
